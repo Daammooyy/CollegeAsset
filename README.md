@@ -35,4 +35,4 @@ python3 main.py
 **Лисин Михаил Максимович**
 **Бирюков Трофим Андреевич**
 
-[Wiki проекта](https://github.com[ваш-юзернейм]/CollegeAsset/wiki).*
+[Wiki проекта, функционал](https://github.com/Daammooyy/CollegeAsset/wiki/Requirements).*
