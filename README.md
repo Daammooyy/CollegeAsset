@@ -30,6 +30,23 @@ pip install -r requirements.txt
 python3 main.py
 ```
 
+## Инструкция по развертыванию на Windows
+
+### 1. Клонирование репозитория
+```cmd
+git clone https://github.com
+cd collegeassets
+```
+
+### 2. Настройка Python
+```cmd
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
+```
+
 ## Наша команда и ротация ролей
 **Шаталов Дмитрий Алексеевич**
 **Лисин Михаил Максимович**
