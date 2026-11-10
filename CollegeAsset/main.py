@@ -12,6 +12,25 @@ def show_menu():
     print("0. Выход")
     print("===========================")
 
+#Проверка ввода
+def error(text_input: str) -> str:
+    while True:
+        user = input(text_input)
+        clean = user.strip()
+
+        if 2 <= len(clean) <= 50:
+            return clean
+
+        print("Введите от 2 до 50 символов\n")
+
+#Генерация ID
+def id_gen():
+    if not demo_inventory:
+        return "INV" + "1".zfill(4)
+
+    max_id = max(int(item["id"].replace("INV", "")) for item in demo_inventory) 
+
+    return "INV" + str(max_id + 1).zfill(4)
 
 #Вывод всего оборудования
 def show_all():
@@ -32,8 +51,8 @@ def show_all():
 #Добавление оборудования
 def add_item():
     print("\n--- Новое оборудование ---")
-    item_type = input("Тип: ").strip()
-    name = input("Название: ").strip()
+    item_type = error("Тип: ")
+    name = error("Название: ")
     while True:
         room = input("Кабинет: ").strip()
         if room.isdigit():
@@ -41,18 +60,24 @@ def add_item():
         print("Введите число")
 
     print("Статус: 1 - исправно, 2 - в ремонте, 3 - списано")
-    choice = input("Выберите статус: ").strip()
-    if choice == "2":
-        status = "в ремонте"
-    elif choice == "3":
-        status = "списано"
-    else:
-        print("Введите 1-3")
+    while True:
+        choice = input("Выберите статус: ").strip()
+        if choice == "1":
+            status = "исправно"
+            break
+        if choice == "2":
+            status = "в ремонте"
+            break
+        elif choice == "3":
+            status = "списано"
+            break
+        else:
+            print("Введите 1-3")
         
-    date_received = input("Дата поступления: ").strip()
-    responsible_person = input("Ответственный: ").strip()
+    date_received = error("Дата поступления: ").strip()
+    responsible_person = error("Ответственный: ").strip()
 
-    new_id = "INV00" + str(len(demo_inventory) + 1)
+    new_id = id_gen()
     
     new_item = {
         "id": new_id,
