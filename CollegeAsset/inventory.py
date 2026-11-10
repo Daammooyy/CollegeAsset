@@ -1,4 +1,4 @@
-# inventory.py
+#Все оборудование
 demo_inventory = [
     {
         "id": "INV001",
@@ -47,6 +47,5 @@ demo_inventory = [
     }
 ]
 
-def get_all_items():
+def get_all():
     return demo_inventory
-
