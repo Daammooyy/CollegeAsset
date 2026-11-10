@@ -53,3 +53,4 @@ demo_inventory = [
 def get_all_items():
     """Возвращает текущий список всего оборудования."""
     return demo_inventory
+
