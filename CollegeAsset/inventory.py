@@ -1,7 +1,4 @@
 # inventory.py
-
-# В первом спринте используем демонстрационные данные в оперативной памяти
-# Структура: unique_id, type, name, room, status, date_received, responsible_person
 demo_inventory = [
     {
         "id": "INV001",
@@ -51,6 +48,5 @@ demo_inventory = [
 ]
 
 def get_all_items():
-    """Возвращает текущий список всего оборудования."""
     return demo_inventory
 
