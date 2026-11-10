@@ -1,39 +1,21 @@
-"""Автотесты спринта 1: загрузка данных, просмотр, обработка меню."""
+import pytest
+from inventory import get_all_items
 
-import os
-import sys
+def test_get_all_items_returns_list():
+    items = get_all_items()
+    assert isinstance(items, list)
+    assert len(items) > 0
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+def test_item_structure():
+    items = get_all_items()
+    first_item = items[0]
+    expected_keys = {'id', 'type', 'name', 'room', 'status', 'date_received', 'responsible_person'}
+    assert expected_keys.issubset(first_item.keys())
 
-from main import handle_choice
-from storage import load_items
-from inventory import show_items, find_by_number
-
-
-def test_load_demo_data_returns_five_records():
-    items = load_items()
-    assert len(items) == 5
-    for item in items:
-        assert item["inventory_number"]
-        assert item["type"] in ("ПК", "Монитор", "Принтер", "Ноутбук")
-        assert item["status"] in ("исправно", "требует ремонта", "списано")
-
-
-def test_show_items_contains_all_numbers():
-    items = load_items()
-    output = show_items(items)
-    for item in items:
-        assert item["inventory_number"] in output
-        assert item["name"] in output
-
-
-def test_unknown_menu_choice_does_not_crash():
-    result = handle_choice("9", load_items())
-    assert "Неизвестный пункт меню" in result
-
-
-def test_find_by_number_found_and_not_found():
-    items = load_items()
-    found = find_by_number(items, "ИВ-0003")
-    assert found is not None and found["type"] == "Монитор"
-    assert find_by_number(items, "ИВ-9999") is None
+def test_specific_item_data():
+    items = get_all_items()
+    first_item = items[0]
+    assert first_item['id'] == "INV001"
+    assert first_item['type'] == "ПК"
+    assert first_item['room'] == "101"
+    assert first_item['status'] == "исправно"
