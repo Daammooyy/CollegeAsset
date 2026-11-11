@@ -1,19 +1,19 @@
 import pytest
-from inventory import get_all_items
+from inventory import get_all
 
-def test_get_all_items_returns_list():
-    items = get_all_items()
+def test_returns_list():
+    items = get_all()
     assert isinstance(items, list)
     assert len(items) > 0
 
 def test_item_structure():
-    items = get_all_items()
+    items = get_all()
     first_item = items[0]
     expected_keys = {'id', 'type', 'name', 'room', 'status', 'date_received', 'responsible_person'}
     assert expected_keys.issubset(first_item.keys())
 
 def test_specific_item_data():
-    items = get_all_items()
+    items = get_all()
     first_item = items[0]
     assert first_item['id'] == "INV001"
     assert first_item['type'] == "ПК"
