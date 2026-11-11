@@ -1,5 +1,4 @@
-from datetime import date
-from inventory import get_all, demo_inventory
+from inventory import get_all, inventory
 
 #Меню
 def show_menu():
@@ -25,10 +24,10 @@ def error(text_input: str) -> str:
 
 #Генерация ID
 def id_gen():
-    if not demo_inventory:
+    if not inventory:
         return "INV" + "1".zfill(4)
 
-    max_id = max(int(item["id"].replace("INV", "")) for item in demo_inventory) 
+    max_id = max(int(item["id"].replace("INV", "")) for item in inventory) 
 
     return "INV" + str(max_id + 1).zfill(4)
 
@@ -40,7 +39,8 @@ def show_all():
         return
         
     print("\n------------------- Список оборудования -------------------")
-    for item in items:
+    for x, item in enumerate(items, start=1):
+        print("№",x)
         print(f"Сер. номер:    {item['id']} | Статус: {item['status']}")
         print(f"Оборудование:  {item['type']} - {item['name']}")
         print(f"Расположение:  Кабинет {item['room']}")
@@ -89,9 +89,49 @@ def add_item():
         "responsible_person": responsible_person
     }
     
-    demo_inventory.append(new_item)
+    inventory.append(new_item)
     print(f"\nДобавлено: {new_id}")
     return new_item
+
+def delete():
+    if not inventory:
+        print("\nПусто")
+        return
+    
+    show_all()
+
+    while True:
+        num_inp = input("\nВведите номер оборудования для удаления или 'stop' для отмены: ")
+
+        if num_inp.lower().strip() == "stop":
+            print("Отмена")
+            return
+
+        if num_inp.isdigit():
+            num = int(num_inp)
+
+            if 1 <= num <= len(inventory):
+                removed = inventory[num - 1]
+
+                while True:
+                    confirm = input(f"Вы точно хотите удалить {removed['name']}? (д/н): ").strip().lower()
+                    if confirm == "д":
+                        inventory.pop(num - 1)
+                        print("Удалено")
+                        return
+                    elif confirm == "н":
+                        print("Отмена")
+                        return
+                    else:
+                        print("Введите только 'д' или 'н'")
+                        continue
+
+            else: print(f"\nВведите число от 1 до {len(inventory)}")
+        else: print(f"\nВведите число от 1 до {len(inventory)} или 'stop'")
+                    
+
+
+
 
 
 def main():
@@ -101,9 +141,11 @@ def main():
         
         if choice == "1":
             show_all()
-        if choice == "2":
+        elif choice == "2":
             add_item()
-        elif choice in ["3", "4", "5"]:
+        elif choice == "5":
+            delete()
+        elif choice in ["3", "4"]:
             print(f"\nПотом")
         elif choice == "0":
             print("\nЗавершение работы программы")

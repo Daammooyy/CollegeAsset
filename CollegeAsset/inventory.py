@@ -1,5 +1,5 @@
 #Все оборудование
-demo_inventory = [
+inventory = [
     {
         "id": "INV001",
         "type": "ПК",
@@ -48,4 +48,4 @@ demo_inventory = [
 ]
 
 def get_all():
-    return demo_inventory
+    return inventory
