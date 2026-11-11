@@ -1,6 +1,6 @@
 import pytest
 from main import id_gen, error, add_item
-from inventory import get_all, demo_inventory
+from inventory import get_all, inventory
 
 def test_id_correct_format():
     next_id = id_gen()
