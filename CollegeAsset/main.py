@@ -59,14 +59,14 @@ def add_item():
             break
         print("Введите число")
 
-    print("Статус: 1 - исправно, 2 - в ремонте, 3 - списано")
+    print("Статус: 1 - исправно, 2 - Требует ремонта, 3 - списано")
     while True:
         choice = input("Выберите статус: ").strip()
         if choice == "1":
             status = "исправно"
             break
         if choice == "2":
-            status = "в ремонте"
+            status = "Требует ремонта"
             break
         elif choice == "3":
             status = "списано"
@@ -129,8 +129,67 @@ def delete():
             else: print(f"\nВведите число от 1 до {len(inventory)}")
         else: print(f"\nВведите число от 1 до {len(inventory)} или 'stop'")
                     
+def modify():
+    if not inventory:
+        print("\nПусто")
+        return
+    
+    show_all()
 
+    while True:
+        num_inp = input("\nВведите номер оборудования для изменения или 'stop' для отмены: ").strip()
 
+        if num_inp.lower() == "stop":
+            print("Отмена")
+            return
+
+        if num_inp.isdigit():
+            num = int(num_inp)
+
+            if 1 <= num <= len(inventory):
+                item = inventory[num - 1]
+                print(f"\nВыбрано:  {item['id']}")
+                print(f"Название: {item['name']}")
+                print(f"Кабинет:  {item['room']}")
+                print(f"Статус:   {item['status']}")
+
+                while True:
+                    choice = input("\n1 - Статус \n2 - Кабинет \n0 - Обратно \nВыберите что изменить: ").strip()
+
+                    if choice == "1":
+                        while True:
+                            inp = input("\n1 - Исправно \n2 - Требует ремонта \n3 - Списано \nНовый статус: ").strip()
+                            if inp == "1":
+                                item['status'] = "исправно"
+                                print("Успешно")
+                                return
+                            elif inp == "2":
+                                item['status'] = "требует ремонта"     
+                                print("Успешно")
+                                return                                           
+                            elif inp == "3":
+                                item['status'] = "списано"
+                                print("Успешно")
+                                return                            
+                            else:
+                                print("Введите корректное число")
+
+                    elif choice == "2":
+                        while True:
+                            classroom = input("\nНовый кабинет: ").strip()
+                            if classroom.isdigit():
+                                item["room"] = classroom
+                                print("Успешно")
+                                return
+                            print("Введите число")
+
+                    elif choice == "0":
+                        print("Обратно")
+                        return
+                    else: print("Введите 1, 2, 0")
+
+            else: print(f"\nВведите число от 1 до {len(inventory)}")
+        else: print(f"\nВведите число от 1 до {len(inventory)} или 'stop'")
 
 
 
@@ -143,9 +202,11 @@ def main():
             show_all()
         elif choice == "2":
             add_item()
+        elif choice == "4":
+            modify()
         elif choice == "5":
             delete()
-        elif choice in ["3", "4"]:
+        elif choice in "3":
             print(f"\nПотом")
         elif choice == "0":
             print("\nЗавершение работы программы")
