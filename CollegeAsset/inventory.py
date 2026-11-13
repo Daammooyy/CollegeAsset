@@ -56,3 +56,12 @@ def delete_record(index: int) -> dict:
     removed = inventory.pop(index)
     save_data(inventory)
     return removed
+
+
+def filter_records(room: str = None, status: str = None) -> list:
+    result = inventory
+    if room:
+        result = [item for item in result if item["room"] == room]
+    if status:
+        result = [item for item in result if item["status"] == status]
+    return result
