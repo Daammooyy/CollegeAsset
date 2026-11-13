@@ -110,36 +110,34 @@ def delete():
     show_all()
     print("\n--- Удаление оборудования ---")
     while True:
-        num_inp = input("\nВведите номер оборудования для удаления или 'stop' для отмены: ").strip()
+        num_inp = input("\nВведите серийный номер оборудования для удаления или 'stop' для отмены: ").strip()
 
         if num_inp.lower() == "stop":
             print("Отмена")
             return
 
-        if num_inp.isdigit():
-            num = int(num_inp)
+        removed = None
+        for item in inventory:
+            if item["id"].lower() == num_inp.lower():
+                removed = item
+                break
 
-            if 1 <= num <= len(inventory):
-                removed = inventory[num - 1]
-
-                while True:
-                    confirm = input(f"Вы точно хотите удалить {removed['name']}? (д/н): ").strip().lower()
-                    if confirm == "д":
-                        inventory.pop(num - 1)
-                        save_data(inventory)
-                        print("Удалено")
-                        return
-                    elif confirm == "н":
-                        print("Отмена")
-                        return
-                    else:
-                        print("Введите только 'д' или 'н'")
-                        continue
-
-            else:
-                print(f"\nВведите число от 1 до {len(inventory)}")
+        if removed:
+            while True:
+                confirm = input(f"Вы точно хотите удалить {removed['name']}? (д/н): ").strip().lower()
+                if confirm == "д":
+                    inventory.remove(removed)
+                    save_data(inventory)
+                    print("Удалено")
+                    return
+                elif confirm == "н":
+                    print("Отмена")
+                    return
+                else:
+                    print("Введите только 'д' или 'н'")
+                    continue
         else:
-            print(f"\nВведите число от 1 до {len(inventory)} или 'stop'")
+            print("\nСерийный номер не найден или введите 'stop'")
 
 
 # Изменение              
