@@ -15,7 +15,7 @@ def test_item_structure():
 def test_specific_item_data():
     items = get_all()
     first_item = items[0]
-    assert first_item['id'] == "INV001"
+    assert first_item['id'] == "INV0001"
     assert first_item['type'] == "ПК"
     assert first_item['room'] == "101"
     assert first_item['status'] == "исправно"
