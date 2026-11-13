@@ -79,14 +79,5 @@
         "status": "исправно",
         "date_received": "25.03.2026",
         "responsible_person": "Морозов А.П."
-    },
-    {
-        "id": "INV0010",
-        "type": "ПК",
-        "name": "Системный блок Acer Veriton X",
-        "room": "605",
-        "status": "требует ремонта",
-        "date_received": "02.04.2026",
-        "responsible_person": "Смирнова Е.Н."
     }
 ]
