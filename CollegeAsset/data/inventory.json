@@ -1,0 +1,92 @@
+[
+    {
+        "id": "INV0001",
+        "type": "ПК",
+        "name": "Системный блок Lenovo ThinkCentre M720",
+        "room": "101",
+        "status": "исправно",
+        "date_received": "15.01.2026",
+        "responsible_person": "Иванов И.И."
+    },
+    {
+        "id": "INV0002",
+        "type": "Монитор",
+        "name": "Dell UltraSharp U2422H",
+        "room": "101",
+        "status": "исправно",
+        "date_received": "15.01.2026",
+        "responsible_person": "Иванов И.И."
+    },
+    {
+        "id": "INV0003",
+        "type": "Принтер",
+        "name": "HP LaserJet Pro M404dn",
+        "room": "102",
+        "status": "в ремонте",
+        "date_received": "03.02.2026",
+        "responsible_person": "Петрова А.С."
+    },
+    {
+        "id": "INV0004",
+        "type": "Ноутбук",
+        "name": "ASUS ExpertBook B1",
+        "room": "204",
+        "status": "исправно",
+        "date_received": "12.02.2026",
+        "responsible_person": "Сидоров К.В."
+    },
+    {
+        "id": "INV0005",
+        "type": "Проектор",
+        "name": "Epson EB-X49",
+        "room": "305",
+        "status": "исправно",
+        "date_received": "20.02.2026",
+        "responsible_person": "Смирнова Е.Н."
+    },
+    {
+        "id": "INV0006",
+        "type": "ПК",
+        "name": "Моноблок HP ProOne 440 G9",
+        "room": "204",
+        "status": "в ремонте",
+        "date_received": "01.03.2026",
+        "responsible_person": "Сидоров К.В."
+    },
+    {
+        "id": "INV0007",
+        "type": "МФУ",
+        "name": "Kyocera ECOSYS M2040dn",
+        "room": "105",
+        "status": "исправно",
+        "date_received": "10.03.2026",
+        "responsible_person": "Козлов Д.М."
+    },
+    {
+        "id": "INV0008",
+        "type": "Монитор",
+        "name": "Samsung S24R350",
+        "room": "102",
+        "status": "списано",
+        "date_received": "14.09.2023",
+        "responsible_person": "Петрова А.С."
+    },
+    {
+        "id": "INV0009",
+        "type": "Коммутатор",
+        "name": "TP-Link TL-SG1024D",
+        "room": "301",
+        "status": "исправно",
+        "date_received": "25.03.2026",
+        "responsible_person": "Морозов А.П."
+    },
+    {
+        "id": "INV0010",
+        "type": "ПК",
+        "name": "Системный блок Acer Veriton X",
+        "room": "605",
+        "status": "требует ремонта",
+        "date_received": "02.04.2026",
+        "responsible_person": "Смирнова Е.Н."
+    }
+]
