@@ -1,6 +1,4 @@
-from inventory import get_all, inventory
-from storage import save_data
-
+from inventory import get_all, inventory, add_record, search_records, update_record, delete_record, filter_records
 
 # Меню
 def show_menu():
@@ -10,9 +8,9 @@ def show_menu():
     print("3. Поиск оборудования")
     print("4. Изменить запись")
     print("5. Удалить запись")
+    print("6. Фильтрация оборудования")
     print("0. Выход")
     print("===========================")
-
 
 # Проверка ввода
 def error(text_input: str) -> str:
@@ -25,16 +23,15 @@ def error(text_input: str) -> str:
 
         print("Введите от 1 до 50 символов\n")
 
-
-# Генерация ID
-def id_gen():
-    if not inventory:
-        return "INV" + "1".zfill(4)
-
-    max_id = max(int(item["id"].replace("INV", "")) for item in inventory) 
-
-    return "INV" + str(max_id + 1).zfill(4)
-
+# Общий вывод списка
+def print_items(items: list):
+    for x, item in enumerate(items, start=1):
+        print("№", x)
+        print(f"Сер. номер:    {item['id']} | Статус: {item['status']}")
+        print(f"Оборудование:  {item['type']} - {item['name']}")
+        print(f"Расположение:  Кабинет {item['room']}")
+        print(f"Ответственный: {item['responsible_person']} (от {item['date_received']})")
+        print("-" * 60)
 
 # Вывод всего оборудования
 def show_all():
@@ -44,13 +41,7 @@ def show_all():
         return
         
     print("\n------------------- Список оборудования -------------------")
-    for x, item in enumerate(items, start=1):
-        print("№", x)
-        print(f"Сер. номер:    {item['id']} | Статус: {item['status']}")
-        print(f"Оборудование:  {item['type']} - {item['name']}")
-        print(f"Расположение:  Кабинет {item['room']}")
-        print(f"Ответственный: {item['responsible_person']} (от {item['date_received']})")
-        print("-" * 60)
+    print_items(items)
 
 
 # Добавление оборудования
@@ -83,23 +74,9 @@ def add_item():
     date_received = error("Дата поступления: ").strip()
     responsible_person = error("Ответственный: ").strip()
 
-    new_id = id_gen()
-    
-    new_item = {
-        "id": new_id,
-        "type": item_type,
-        "name": name,
-        "room": room,
-        "status": status,
-        "date_received": date_received,
-        "responsible_person": responsible_person
-    }
-    
-    inventory.append(new_item)
-    save_data(inventory)
-    print(f"\nДобавлено: {new_id}")
+    new_item = add_record(item_type, name, room, status, date_received, responsible_person)
+    print(f"\nДобавлено: {new_item['id']}")
     return new_item
-
 
 # Удаление
 def delete():
@@ -116,18 +93,18 @@ def delete():
             print("Отмена")
             return
 
-        removed = None
-        for item in inventory:
+        target_index = -1
+        for i, item in enumerate(inventory):
             if item["id"].lower() == num_inp.lower():
-                removed = item
+                target_index = i
                 break
 
-        if removed:
+        if target_index != -1:
+            removed = inventory[target_index]
             while True:
                 confirm = input(f"Вы точно хотите удалить {removed['name']}? (д/н): ").strip().lower()
                 if confirm == "д":
-                    inventory.remove(removed)
-                    save_data(inventory)
+                    delete_record(target_index)
                     print("Удалено")
                     return
                 elif confirm == "н":
@@ -135,82 +112,72 @@ def delete():
                     return
                 else:
                     print("Введите только 'д' или 'н'")
-                    continue
         else:
             print("\nСерийный номер не найден или введите 'stop'")
 
-
-# Изменение              
+# Изменение
 def modify():
     if not inventory:
         print("\nПусто")
         return
-    
     show_all()
     print("\n--- Изменение оборудования ---")
 
     while True:
-        num_inp = input("\nВведите номер оборудования для изменения или 'stop' для отмены: ").strip()
-
+        num_inp = input("\nВведите серийный номер оборудования для изменения или 'stop' для отмены: ").strip()
         if num_inp.lower() == "stop":
             print("Отмена")
             return
+        target_index = -1
+        for i, item in enumerate(inventory):
+            if item["id"].lower() == num_inp.lower():
+                target_index = i
+                break
 
-        if num_inp.isdigit():
-            num = int(num_inp)
+        if target_index != -1:
+            item = inventory[target_index]
+            print(f"\nВыбрано:  {item['id']}")
+            print(f"Название: {item['name']}")
+            print(f"Кабинет:  {item['room']}")
+            print(f"Статус:   {item['status']}")
 
-            if 1 <= num <= len(inventory):
-                item = inventory[num - 1]
-                print(f"\nВыбрано:  {item['id']}")
-                print(f"Название: {item['name']}")
-                print(f"Кабинет:  {item['room']}")
-                print(f"Статус:   {item['status']}")
+            while True:
+                choice = input("\n1 - Статус \n2 - Кабинет \n0 - Обратно \nВыберите что изменить: ").strip()
 
-                while True:
-                    choice = input("\n1 - Статус \n2 - Кабинет \n0 - Обратно \nВыберите что изменить: ").strip()
+                if choice == "1":
+                    while True:
+                        inp = input("\n1 - Исправно \n2 - Требует ремонта \n3 - Списано \nНовый статус: ").strip()
+                        if inp == "1":
+                            update_record(target_index, "status", "исправно")
+                            print("Успешно")
+                            return
+                        elif inp == "2":
+                            update_record(target_index, "status", "требует ремонта")
+                            print("Успешно")
+                            return                                           
+                        elif inp == "3":
+                            update_record(target_index, "status", "списано")
+                            print("Успешно")
+                            return                            
+                        else:
+                            print("Введите корректное число")
 
-                    if choice == "1":
-                        while True:
-                            inp = input("\n1 - Исправно \n2 - Требует ремонта \n3 - Списано \nНовый статус: ").strip()
-                            if inp == "1":
-                                item['status'] = "исправно"
-                                save_data(inventory)
-                                print("Успешно")
-                                return
-                            elif inp == "2":
-                                item['status'] = "требует ремонта"
-                                save_data(inventory)
-                                print("Успешно")
-                                return                                           
-                            elif inp == "3":
-                                item['status'] = "списано"
-                                save_data(inventory)
-                                print("Успешно")
-                                return                            
-                            else:
-                                print("Введите корректное число")
+                elif choice == "2":
+                    while True:
+                        classroom = input("\nНовый кабинет: ").strip()
+                        if classroom.isdigit():
+                            update_record(target_index, "room", classroom)
+                            print("Успешно")
+                            return
+                        print("Введите число")
 
-                    elif choice == "2":
-                        while True:
-                            classroom = input("\nНовый кабинет: ").strip()
-                            if classroom.isdigit():
-                                item["room"] = classroom
-                                save_data(inventory)
-                                print("Успешно")
-                                return
-                            print("Введите число")
-
-                    elif choice == "0":
-                        print("Обратно")
-                        return
-                    else:
-                        print("Введите 1, 2, 0")
-
-            else:
-                print(f"\nВведите число от 1 до {len(inventory)}")
+                elif choice == "0":
+                    print("Обратно")
+                    return
+                else:
+                    print("Введите 1, 2, 0")
         else:
-            print(f"\nВведите число от 1 до {len(inventory)} или 'stop'")
-
+            print("\nСерийный номер не найден или введите 'stop'")
 
 # Поиск
 def search():
@@ -219,36 +186,65 @@ def search():
         return
 
     print("\n--- Поиск ---")
-
-    query = input("Введите запрос для поиска: ").strip().lower()
+    query = input("Введите запрос для поиска: ").strip()
     if not query:
         print("Запрос не может быть пустым")
         return
 
-    words = query.split()
-    result = []
-
-    for item in inventory:
-        full_info = (
-            f"{item['id']} {item['type']} {item['name']} "
-            f"{item['room']} {item['status']} {item['responsible_person']}"
-        ).lower()
-
-        if all(word in full_info for word in words):
-            result.append(item)
+    result = search_records(query)
 
     if not result:
         print("\nНичего не найдено")
     else:
         print(f"\n------------------- Найдено записей: {len(result)} -------------------")
-        for x, item in enumerate(result, start=1):
-            print("№", x)
-            print(f"Сер. номер:    {item['id']} | Статус: {item['status']}")
-            print(f"Оборудование:  {item['type']} - {item['name']}")
-            print(f"Расположение:  Кабинет {item['room']}")
-            print(f"Ответственный: {item['responsible_person']} (от {item['date_received']})")
-            print("-" * 60)
+        print_items(result)
 
+# Фильтрация
+def filter_items():
+    if not inventory:
+        print("\nИнвентарь пуст")
+        return
+
+    print("\n--- Фильтрация ---")
+    print("1 - По кабинету")
+    print("2 - По состоянию")
+    print("0 - Обратно")
+
+    while True:
+        choice = input("Выберите фильтр: ").strip()
+        if choice == "1":
+            while True:
+                room = input("Введите номер кабинета: ").strip()
+                if room.isdigit():
+                    result = filter_records(room=room)
+                    break
+                print("Введите число")
+            break
+        elif choice == "2":
+            print("1 - исправно, 2 - требует ремонта, 3 - списано")
+            while True:
+                st = input("Выберите статус: ").strip()
+                if st == "1":
+                    result = filter_records(status="исправно")
+                    break
+                elif st == "2":
+                    result = filter_records(status="требует ремонта")
+                    break
+                elif st == "3":
+                    result = filter_records(status="списано")
+                    break
+                print("Введите 1-3")
+            break
+        elif choice == "0":
+            return
+        else:
+            print("Введите 1, 2 или 0")
+
+    if not result:
+        print("\nНичего не найдено")
+    else:
+        print(f"\n------------------- Найдено записей: {len(result)} -------------------")
+        print_items(result)
         
 # Выбор действия
 def main():
@@ -266,12 +262,13 @@ def main():
             modify()
         elif choice == "5":
             delete()
+        elif choice == "6":
+            filter_items()
         elif choice == "0":
             print("\nЗавершение работы программы")
             break
         else:
-            print("\nОшибка, введите пункт от 0 до 5")
-
+            print("\nОшибка, введите пункт от 0 до 6")
 
 if __name__ == "__main__":
     main()
