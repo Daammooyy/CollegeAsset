@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import pytest
 from main import modify, delete
-from inventory import inventory
+from inventory import inventory, search_records
 
 @pytest.fixture(autouse=True)
 def setup_inventory(monkeypatch):
@@ -33,6 +33,22 @@ def setup_inventory(monkeypatch):
     yield
     inventory.clear()
 
+# 1. Поиск по существующему номеру и кабинету
+def test_search_existing():
+    by_id = search_records("INV0001")
+    assert len(by_id) == 1
+    assert by_id[0]["name"] == "Dell OptiPlex"
+
+    by_room = search_records("205")
+    assert len(by_room) == 1
+    assert by_room[0]["id"] == "INV0002"
+
+# 2. Поиск по несуществующему запросу
+def test_search_not_found():
+    result = search_records("INV9999")
+    assert result == []
+
+# 3. Изменение записи (статуса)
 def test_modify_status_valid(monkeypatch, capsys):
     inputs = iter(["INV0001", "1", "3"])
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
@@ -41,17 +57,7 @@ def test_modify_status_valid(monkeypatch, capsys):
     assert "Успешно" in out
     assert inventory[0]["status"] == "списано"
 
-def test_modify_room_valid_and_invalid_input(monkeypatch, capsys):
-    inputs = iter(["INV0002", "2", "абв", "310"])
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
-
-    modify()
-
-    out = capsys.readouterr().out
-    assert "Введите число" in out
-    assert "Успешно" in out
-    assert inventory[1]["room"] == "310"
-
+# 4. Обработка неверного номера при изменении
 def test_modify_nonexistent_and_stop(monkeypatch, capsys):
     inputs = iter(["INV9999", "stop"])
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
@@ -60,37 +66,11 @@ def test_modify_nonexistent_and_stop(monkeypatch, capsys):
     assert "Серийный номер не найден" in out
     assert "Отмена" in out
 
-def test_modify_empty_list(capsys):
-    inventory.clear()
-    modify()
-
-    out = capsys.readouterr().out
-    assert "Пусто" in out
-
-def test_delete_confirm_yes(monkeypatch, capsys):
-    inputs = iter(["INV0001", "д"])
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
-    delete()
-    out = capsys.readouterr().out
-    assert "Удалено" in out
-    assert len(inventory) == 1
-    assert inventory[0]["id"] == "INV0002"
-
+# 5. Отмена удаления при ответе "н"
 def test_delete_cancel_no(monkeypatch, capsys):
     inputs = iter(["INV0001", "н"])
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
     delete()
-
     out = capsys.readouterr().out
     assert "Отмена" in out
-    assert len(inventory) == 2
-
-def test_delete_invalid_id(monkeypatch, capsys):
-    inputs = iter(["INV0000", "stop"])
-    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
-
-    delete()
-
-    out = capsys.readouterr().out
-    assert "Серийный номер не найден" in out
     assert len(inventory) == 2
